@@ -23,9 +23,6 @@ void oled_default(void);
 void main(void){
   /* DHT22 structure */
   dht22_data data;
-  /* Reset Pin for OLED in Proteus */
-  TRISDbits.TRISD1 = 0;
-  PORTDbits.RD1 = 0;
   /* System setup */  
   uart_init(); // Initializes the UART
   ssd1306_init(); // Initializes the OLED 

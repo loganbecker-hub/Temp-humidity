@@ -3,12 +3,21 @@
 
 #include <stdint.h>
 
+/* If defined '1' simulation will work on PROTEUS 
+ * else if defined '0' real device address of OLED will be used
+ */
+
+#define PROTEUS 0
+
+#if PROTEUS 
+  #define SLAVE_ADDRESS                    0x7a // Proteus Address                                            
+#else
+  #define SLAVE_ADDRESS                    0x78 // Real Address of OLED
+#endif
+
 //OLED DIMENSION: Change if they are different here
 #define OLED_HEIGHT                      32
 #define OLED_WIDTH                       128
-// Slave address
-#define SLAVE_ADDRESS                    0x7a //'0x78' works 128-32
-                                              //'0x7A' for proteus slave address
 //Fundamental Command Table              
 #define SET_CONTRAST                     0x81 // follow with contrast level(0-256) 1 byte command
 #define DISPLAY_RESUME                   0xA4 

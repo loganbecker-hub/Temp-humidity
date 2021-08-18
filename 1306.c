@@ -4,13 +4,13 @@
 
 void ssd1306_init(void){
   i2c_master_init(400000); // 400KHZ speed i2c mode
-  // USED IN PROTEUS ONLY 
+#if PROTEUS 
   __delay_ms(100); // VDD becomes stable
   PORTDbits.RD0 = 0; // SET RESET LOW
   TRISDbits.TRISD0 = 0; // RESET PIN OUTPUT MODE
   __delay_ms(10); // waiting for atleast 3us 
   PORTDbits.RD0 = 1; // HIGH
-  // USED IN PROTEUS ONLY 
+#endif
   command_mode(DISPLAY_OFF);
   command_mode(SET_DISPLAY_CLOCK);
   command_mode(0x80); // RATIO EDIT THIS FOR MYSELF
