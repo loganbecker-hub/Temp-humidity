@@ -12,7 +12,7 @@ void start_signal(void){
   DHT22_DIR_REG = 0; // Output mode
   DHT22_DATA_REG = 0; // Low output
   __delay_ms(25); // For sensor to detect the start signal
-  PORTCbits.RC5 = 1; // High output
+  DHT22_DATA_REG = 1; // High output
   __delay_us(30); // waiting for the response from DHT22 
   DHT22_DIR_REG = 1; // Changed to input mode to receive response and data
 }
