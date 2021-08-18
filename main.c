@@ -7,20 +7,22 @@
 #include "dht22.h"
 #include "uart.h"
 
+typedef struct dht22_data{
+  uint8_t total[5];
+  uint16_t rh;
+  uint16_t temp;
+}dht22_data;
+
+void get_data(dht22_data *data);
+void process_data(dht22_data *data);
+void display_data(dht22_data *result);
+
 void oled_startup(void);
 void oled_default(void);
 
-void main(void){ 
-  /* DHT variables */
-  uint16_t temp; 
-  uint16_t rh;
-  uint8_t check_sum; 
-  uint8_t byte_1; 
-  uint8_t byte_2; 
-  uint8_t byte_3; 
-  uint8_t byte_4;
-  char buffer[4];
-  
+void main(void){
+  /* DHT22 structure */
+  dht22_data data;
   /* Reset Pin for OLED in Proteus */
   TRISDbits.TRISD1 = 0;
   PORTDbits.RD1 = 0;
@@ -36,35 +38,43 @@ void main(void){
   while(1){
     start_signal(); // Send the starting signal to DHT22
     if(response()){ // Checks if the DHT22 sends a response to MCU
-      byte_1 = read_data(); // read and store first 8bits
-      byte_2 = read_data(); // read and store second 8bits
-      byte_3 = read_data(); // read and store third 8bits
-      byte_4 = read_data(); // read and store fourth 8bits
-      check_sum = read_data(); // read and store fifth 8bits
-      // HUMIDITY
-      rh = ( (byte_1 << 8) | byte_2 ) / 10;
-      //  TEMPERATURE
-      temp = ( (byte_3 << 8) | byte_4 ) / 10;
-      sprintf(buffer, "%d", temp);
-      uart_send_char('T');
-      uart_send_string(buffer);
-      row_col(0,0);
-      oled_string("TEMP");
-      battery(20, temp);
-      oled_space(20);
-      oled_string(buffer);     
-      //RH
-      sprintf(buffer, "%d", rh);
-      uart_send_char('H');
-      uart_send_string(buffer);
-      row_col(2,0);
-      oled_string("HUMID");
-      battery(14, rh);
-      oled_space(19);
-      oled_string(buffer); //humid value
+      get_data(&data);
+      process_data(&data);
+      display_data(&data);
     }
-    else{}    
+    else{}  
   }
+}
+
+void get_data(dht22_data *data){
+  for(uint8_t i = 0; i < 5; i++){
+    data->total[i] = read_data();
+  }
+}
+
+void process_data(dht22_data *data){
+  data->rh = ( (data->total[0] << 8) | data->total[1] ) /10;
+  data->temp = ( (data->total[2] << 8) | data->total[3]) /10;
+}
+
+void display_data(dht22_data *result){
+  char buffer[4];
+  sprintf(buffer, "%d", result->temp);
+  uart_send_char('T');
+  uart_send_string(buffer);
+  row_col(0,0);
+  oled_string("TEMP");
+  battery(20, result->temp);
+  oled_space(20);
+  oled_string(buffer);
+  sprintf(buffer, "%d", result->rh);
+  uart_send_char('H');
+  uart_send_string(buffer);
+  row_col(2,0);
+  oled_string("HUMID");
+  battery(14, result->rh);
+  oled_space(19);
+  oled_string(buffer); //humid value
 }
 
 void oled_startup(void){
