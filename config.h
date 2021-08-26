@@ -1,3 +1,5 @@
+#ifndef _CONFIG_H
+#define _CONFIG_H
 // CONFIG
 #pragma config FOSC = HS        // Oscillator Selection bits (HS oscillator)
 #pragma config WDTE = OFF       // Watchdog Timer Enable bit (WDT disabled)
@@ -13,3 +15,5 @@
 
 #include <xc.h> //helps include __delay_ms()
 #define _XTAL_FREQ 16000000
+
+#endif
